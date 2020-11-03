@@ -389,6 +389,15 @@ void MoveSnap(int *posx, int *posy, int wndwidth, int wndheight) {
   // Enumerate monitors and windows
   Enum();
 
+  RECT rect, frame;
+  GetWindowRect(state.hwnd, &rect);
+  DwmGetWindowAttribute(state.hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &frame, sizeof(RECT));
+  RECT border;
+  border.left = frame.left - rect.left;
+  border.top = frame.top - rect.top;
+  border.right = rect.right - frame.right;
+  border.bottom = rect.bottom - frame.bottom;
+
   // thresholdx and thresholdy will shrink to make sure the dragged window will snap to the closest windows
   int i, j, thresholdx, thresholdy, stuckx=0, stucky=0, stickx=0, sticky=0;
   thresholdx = thresholdy = sharedsettings.SnapThreshold;
@@ -416,25 +425,25 @@ void MoveSnap(int *posx, int *posy, int wndwidth, int wndheight) {
       if (*posx-thresholdx < snapwnd.right && snapwnd.right < *posx+thresholdx) {
         // The left edge of the dragged window will snap to this window's right edge
         stuckx = 1;
-        stickx = snapwnd.right;
+        stickx = snapwnd.right - border.left;
         thresholdx = snapwnd.right-*posx;
       }
       else if (snapinside_cond && *posx+wndwidth-thresholdx < snapwnd.right && snapwnd.right < *posx+wndwidth+thresholdx) {
         // The right edge of the dragged window will snap to this window's right edge
         stuckx = 1;
-        stickx = snapwnd.right-wndwidth;
+        stickx = snapwnd.right-wndwidth + border.right;
         thresholdx = snapwnd.right-(*posx+wndwidth);
       }
       else if (snapinside_cond && *posx-thresholdx < snapwnd.left && snapwnd.left < *posx+thresholdx) {
         // The left edge of the dragged window will snap to this window's left edge
         stuckx = 1;
-        stickx = snapwnd.left;
+        stickx = snapwnd.left - border.left;
         thresholdx = snapwnd.left-*posx;
       }
       else if (*posx+wndwidth-thresholdx < snapwnd.left && snapwnd.left < *posx+wndwidth+thresholdx) {
         // The right edge of the dragged window will snap to this window's left edge
         stuckx = 1;
-        stickx = snapwnd.left-wndwidth;
+        stickx = snapwnd.left-wndwidth + border.right;
         thresholdx = snapwnd.left-(*posx+wndwidth);
       }
     }
@@ -446,25 +455,25 @@ void MoveSnap(int *posx, int *posy, int wndwidth, int wndheight) {
       if (*posy-thresholdy < snapwnd.bottom && snapwnd.bottom < *posy+thresholdy) {
         // The top edge of the dragged window will snap to this window's bottom edge
         stucky = 1;
-        sticky = snapwnd.bottom;
+        sticky = snapwnd.bottom - border.top;
         thresholdy = snapwnd.bottom-*posy;
       }
       else if (snapinside_cond && *posy+wndheight-thresholdy < snapwnd.bottom && snapwnd.bottom < *posy+wndheight+thresholdy) {
         // The bottom edge of the dragged window will snap to this window's bottom edge
         stucky = 1;
-        sticky = snapwnd.bottom-wndheight;
+        sticky = snapwnd.bottom-wndheight + border.bottom;
         thresholdy = snapwnd.bottom-(*posy+wndheight);
       }
       else if (snapinside_cond && *posy-thresholdy < snapwnd.top && snapwnd.top < *posy+thresholdy) {
         // The top edge of the dragged window will snap to this window's top edge
         stucky = 1;
-        sticky = snapwnd.top;
+        sticky = snapwnd.top - border.top;
         thresholdy = snapwnd.top-*posy;
       }
       else if (*posy+wndheight-thresholdy < snapwnd.top && snapwnd.top < *posy+wndheight+thresholdy) {
         // The bottom edge of the dragged window will snap to this window's top edge
         stucky = 1;
-        sticky = snapwnd.top-wndheight;
+        sticky = snapwnd.top-wndheight + border.bottom;
         thresholdy = snapwnd.top-(*posy+wndheight);
       }
     }
@@ -481,6 +490,15 @@ void MoveSnap(int *posx, int *posy, int wndwidth, int wndheight) {
 
 void ResizeSnap(int *posx, int *posy, int *wndwidth, int *wndheight) {
   Enum(); // Enumerate monitors and windows
+
+  RECT rect, frame;
+  GetWindowRect(state.hwnd, &rect);
+  DwmGetWindowAttribute(state.hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &frame, sizeof(RECT));
+  RECT border;
+  border.left = frame.left - rect.left;
+  border.top = frame.top - rect.top;
+  border.right = rect.right - frame.right;
+  border.bottom = rect.bottom - frame.bottom;
 
   // thresholdx and thresholdy will shrink to make sure the dragged window will snap to the closest windows
   int i, j, thresholdx, thresholdy, stuckleft=0, stucktop=0, stuckright=0, stuckbottom=0, stickleft=0, sticktop=0, stickright=0, stickbottom=0;
@@ -509,25 +527,25 @@ void ResizeSnap(int *posx, int *posy, int *wndwidth, int *wndheight) {
       if (state.resize.x == RESIZE_LEFT && *posx-thresholdx < snapwnd.right && snapwnd.right < *posx+thresholdx) {
         // The left edge of the dragged window will snap to this window's right edge
         stuckleft = 1;
-        stickleft = snapwnd.right;
+        stickleft = snapwnd.right - border.left;
         thresholdx = snapwnd.right-*posx;
       }
       else if (snapinside_cond && state.resize.x == RESIZE_RIGHT && *posx+*wndwidth-thresholdx < snapwnd.right && snapwnd.right < *posx+*wndwidth+thresholdx) {
         // The right edge of the dragged window will snap to this window's right edge
         stuckright = 1;
-        stickright = snapwnd.right;
+        stickright = snapwnd.right + border.right;
         thresholdx = snapwnd.right-(*posx+*wndwidth);
       }
       else if (snapinside_cond && state.resize.x == RESIZE_LEFT && *posx-thresholdx < snapwnd.left && snapwnd.left < *posx+thresholdx) {
         // The left edge of the dragged window will snap to this window's left edge
         stuckleft = 1;
-        stickleft = snapwnd.left;
+        stickleft = snapwnd.left - border.left;
         thresholdx = snapwnd.left-*posx;
       }
       else if (state.resize.x == RESIZE_RIGHT && *posx+*wndwidth-thresholdx < snapwnd.left && snapwnd.left < *posx+*wndwidth+thresholdx) {
         // The right edge of the dragged window will snap to this window's left edge
         stuckright = 1;
-        stickright = snapwnd.left;
+        stickright = snapwnd.left + border.right;
         thresholdx = snapwnd.left-(*posx+*wndwidth);
       }
     }
@@ -539,25 +557,25 @@ void ResizeSnap(int *posx, int *posy, int *wndwidth, int *wndheight) {
       if (state.resize.y == RESIZE_TOP && *posy-thresholdy < snapwnd.bottom && snapwnd.bottom < *posy+thresholdy) {
         // The top edge of the dragged window will snap to this window's bottom edge
         stucktop = 1;
-        sticktop = snapwnd.bottom;
+        sticktop = snapwnd.bottom - border.top;
         thresholdy = snapwnd.bottom-*posy;
       }
       else if (snapinside_cond && state.resize.y == RESIZE_BOTTOM && *posy+*wndheight-thresholdy < snapwnd.bottom && snapwnd.bottom < *posy+*wndheight+thresholdy) {
         // The bottom edge of the dragged window will snap to this window's bottom edge
         stuckbottom = 1;
-        stickbottom = snapwnd.bottom;
+        stickbottom = snapwnd.bottom + border.bottom;
         thresholdy = snapwnd.bottom-(*posy+*wndheight);
       }
       else if (snapinside_cond && state.resize.y == RESIZE_TOP && *posy-thresholdy < snapwnd.top && snapwnd.top < *posy+thresholdy) {
         // The top edge of the dragged window will snap to this window's top edge
         stucktop = 1;
-        sticktop = snapwnd.top;
+        sticktop = snapwnd.top - border.top;
         thresholdy = snapwnd.top-*posy;
       }
       else if (state.resize.y == RESIZE_BOTTOM && *posy+*wndheight-thresholdy < snapwnd.top && snapwnd.top < *posy+*wndheight+thresholdy) {
         // The bottom edge of the dragged window will snap to this window's top edge
         stuckbottom = 1;
-        stickbottom = snapwnd.top;
+        stickbottom = snapwnd.top + border.bottom;
         thresholdy = snapwnd.top-(*posy+*wndheight);
       }
     }
