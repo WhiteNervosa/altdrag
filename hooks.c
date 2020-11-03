@@ -1694,7 +1694,7 @@ __declspec(dllexport) LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wPara
           state.offset.y = pt.y-wnd.top;
         }
 
-        cursor = cursors[HAND];
+        cursor = cursors[SIZEALL];
       }
       else if (action == ACTION_RESIZE) {
         // Restore the window (to monitor size) if it's maximized
