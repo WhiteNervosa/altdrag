@@ -8,8 +8,8 @@
 :: For mingw-w32, set prefix32 to i686-w64-mingw32-
 :: For mingw-w64, set prefix64 to x86_64-w64-mingw32-
 
-set prefix32=i686-w64-mingw32-
-set prefix64=x86_64-w64-mingw32-
+set prefix32=C:\MinGW64-i686\mingw32\bin\
+set prefix64=C:\MinGW64-x86_64\mingw64\bin\
 
 set x64=0
 if "%1" == "x64" set x64=1
@@ -47,7 +47,7 @@ if "%1" == "all" (
   )
 
   echo Building installer
-  makensis /V2 installer.nsi
+  "C:\Program Files (x86)\NSIS\Bin\makensis.exe" /V2 installer.nsi
 
   (cd bin && sha256sum *.exe *.dll > sha256sum.txt)
 ) else if "%1" == "lang" (
