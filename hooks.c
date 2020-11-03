@@ -31,7 +31,7 @@ GUID my_IID_IAudioEndpointVolume = {0x5CDF2C82,0x841E,0x4546,{0x97,0x22,0x0C,0xF
 
 // App
 #define APP_NAME L"AltDrag"
-#define AERO_THRESHOLD 5
+#define AERO_THRESHOLD 15
 
 // Boring stuff
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
