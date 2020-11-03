@@ -781,6 +781,7 @@ void MouseMove() {
         posy = mon.bottom-wndheight;
       }
       else if (pt.y < mon.top+AERO_THRESHOLD && !state.mdiclient) {
+        return;
         // Top
         if (!maximized) {
           state.wndentry->restore = 0;
